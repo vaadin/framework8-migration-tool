@@ -137,6 +137,8 @@ public class Migrate {
                     "extends " + v7Class + " ");
             javaFile = javaFile.replace("implements " + comvaadinClass + " ",
                     "implements " + v7Class + " ");
+            javaFile = javaFile.replace("throws " + comvaadinClass + " ",
+                    "throws " + v7Class + " ");
         }
 
         return javaFile;

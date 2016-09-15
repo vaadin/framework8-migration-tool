@@ -8,7 +8,7 @@ Running `mvn clean install` produces a runnable JAR in the local Maven folder. T
 To convert a Vaadin 7 project, execute the JAR in the project folder, e.g.
 in "myproject" run
 
-`java -jar $HOME/.m2/repository/com/vaadin/framework8/vaadin8-migration-tool/8.0-SNAPSHOT/vaadin8-migration-tool-8.0-SNAPSHOT.jar`
+`java -jar $HOME/.m2/repository/com/vaadin/vaadin8-migration-tool/8.0-SNAPSHOT/vaadin8-migration-tool-8.0-SNAPSHOT.jar`
 
 ## What Is Migrated?
 

@@ -3,8 +3,8 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.vaadin</groupId>
-    <artifactId>vaadin8-migration-tool</artifactId>
-    <name>vaadin8 migration tool</name>
+    <artifactId>framework8-migration-tool</artifactId>
+    <name>Vaadin Framework 8 migration tool</name>
     <packaging>jar</packaging>
     <version>8.0-SNAPSHOT</version>
 
@@ -28,9 +28,9 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:https:https://github.com/vaadin/vaadin8-migration-tool.git</connection>
-        <developerConnection>scm:https:https://github.com/vaadin/vaadin8-migration-tool.git</developerConnection>
-        <url>https://github.com/vaadin/vaadin8-migration-tool</url>
+        <connection>scm:https:https://github.com/vaadin/framework8-migration-tool.git</connection>
+        <developerConnection>scm:https:https://github.com/vaadin/framework8-migration-tool.git</developerConnection>
+        <url>https://github.com/vaadin/framework8-migration-tool</url>
     </scm>
 
 

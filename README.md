@@ -18,6 +18,24 @@ The tool changes
 
 The tool does not, and you need to
 * Update the dependencies in the project from version 7.x to 8.x
+* Make sure that you are using Java 8
+* Update your `vaadin.version` property to some Vaadin Framework 8 version (e.g. 8.0.0.beta1).
+* Use `vaadin-prereleases` repository if you are using some beta (not a snapshot): 
+<pre>
+&lt;repository&gt;
+        &lt;id&gt;vaadin-prereleases&lt;/id&gt;
+        &lt;url&gt;https://maven.vaadin.com/vaadin-prereleases&lt;/url&gt;
+&lt;/repository&gt;
+
+
+&lt;pluginRepositories&gt;
+    &lt;pluginRepository&gt;
+            &lt;id&gt;vaadin-prereleases&lt;/id&gt;
+            &lt;url&gt;https://maven.vaadin.com/vaadin-prereleases&lt;/url&gt;
+    &lt;/pluginRepository&gt;
+&lt;/pluginRepositories&gt;
+
+</pre>
 * Change project dependencies from `vaadin-server` to `vaadin-compatibility-server`
 * Change project dependencies from `vaadin-client-compiled` to `vaadin-compatibility-client-compiled` if you are using `DefaultWidgetSet`
 * Change project widget set from `DefaultWidgetSet` to `Vaadin7WidgetSet` if you are using `DefaultWidgetset`

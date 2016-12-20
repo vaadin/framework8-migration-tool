@@ -18,16 +18,26 @@ import java.util.zip.ZipFile;
 import org.apache.commons.io.IOUtils;
 
 public class Migrate {
+
+    private static final String VERSION = "-version=";
+
     private static HashSet<String> serverV7Classes;
     private static Set<String> sharedV7Classes;
     private static Set<String> serverV7UIClasses;
 
     public static void main(String[] args) throws Exception {
-        System.out.println("Scanning for compatibility classes...");
+        String version = "8.0.0.beta1";
+        if (args.length > 0) {
+            if (args[0].startsWith(VERSION)) {
+                version = args[0].substring(VERSION.length());
+            }
+        }
+        System.out.println("Scanning for compatibility classes for " + version
+                + " version...");
         String compatServerFilename = VadinJarFinder
-                .get("vaadin-compatibility-server", "8.0-SNAPSHOT");
+                .get("vaadin-compatibility-server", version);
         String compatSharedFilename = VadinJarFinder
-                .get("vaadin-compatibility-shared", "8.0-SNAPSHOT");
+                .get("vaadin-compatibility-shared", version);
 
         serverV7Classes = new HashSet<>();
         sharedV7Classes = new HashSet<>();

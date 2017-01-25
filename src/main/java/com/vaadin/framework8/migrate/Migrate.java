@@ -55,7 +55,7 @@ public class Migrate {
         File projectRoot = new File(".");
         AtomicInteger javaCount = new AtomicInteger(0);
         AtomicInteger htmlCount = new AtomicInteger(0);
-        migrateFiles(projectRoot, javaCount, htmlCount);
+        migrateFiles(projectRoot, javaCount, htmlCount, version);
 
         System.out.println("Scanned " + javaCount.get() + " Java files");
         System.out.println("Scanned " + htmlCount.get() + " HTML files");
@@ -80,12 +80,12 @@ public class Migrate {
     }
 
     private static void migrateFiles(File directory, AtomicInteger javaCount,
-            AtomicInteger htmlCount) {
+            AtomicInteger htmlCount, String version) {
         assert directory.isDirectory();
 
         for (File f : directory.listFiles()) {
             if (f.isDirectory()) {
-                migrateFiles(f, javaCount, htmlCount);
+                migrateFiles(f, javaCount, htmlCount, version);
             } else if (isJavaFile(f)) {
                 try {
                     javaCount.incrementAndGet();
@@ -96,7 +96,7 @@ public class Migrate {
             } else if (isDeclarativeFile(f)) {
                 try {
                     htmlCount.incrementAndGet();
-                    migrateDeclarative(f);
+                    migrateDeclarative(f, version);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -129,9 +129,11 @@ public class Migrate {
         IOUtils.write(modifyJava(javaFile), new FileOutputStream(f));
     }
 
-    private static void migrateDeclarative(File f) throws IOException {
+    private static void migrateDeclarative(File f, String version)
+            throws IOException {
         String htmlFile = IOUtils.toString(f.toURI(), StandardCharsets.UTF_8);
-        IOUtils.write(modifyDeclarative(htmlFile), new FileOutputStream(f));
+        IOUtils.write(modifyDeclarative(htmlFile, version),
+                new FileOutputStream(f));
     }
 
     private static String modifyJava(String javaFile) {
@@ -154,7 +156,7 @@ public class Migrate {
         return javaFile;
     }
 
-    private static String modifyDeclarative(String htmlFile) {
+    private static String modifyDeclarative(String htmlFile, String version) {
         for (String v7Class : serverV7UIClasses) {
             String simpleClassName = v7Class
                     .substring(v7Class.lastIndexOf('.') + 1);
@@ -178,6 +180,11 @@ public class Migrate {
             htmlFile = htmlFile.replace(legacyEndTag, newEndTag);
             htmlFile = htmlFile.replace(endTag, newEndTag);
 
+            // Version
+            htmlFile = htmlFile.replaceAll(
+                    "<meta name=\"vaadin-version\" content=\"7.*\">",
+                    "<meta name=\"vaadin-version\" content=\"" + version
+                            + "\">");
         }
 
         return htmlFile;

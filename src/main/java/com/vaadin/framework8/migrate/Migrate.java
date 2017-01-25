@@ -24,6 +24,7 @@ public class Migrate {
     private static HashSet<String> serverV7Classes;
     private static Set<String> sharedV7Classes;
     private static Set<String> serverV7UIClasses;
+    private static Set<String> clientV7Classes;
 
     public static void main(String[] args) throws Exception {
         String version = "8.0.0.beta1";
@@ -38,12 +39,20 @@ public class Migrate {
                 .get("vaadin-compatibility-server", version);
         String compatSharedFilename = VadinJarFinder
                 .get("vaadin-compatibility-shared", version);
+        String compatClientFilename = VadinJarFinder
+                .get("vaadin-compatibility-client", version);
 
         serverV7Classes = new HashSet<>();
         sharedV7Classes = new HashSet<>();
+        clientV7Classes = new HashSet<>();
 
         findV7Classes(compatServerFilename, serverV7Classes);
         findV7Classes(compatSharedFilename, sharedV7Classes);
+        findV7Classes(compatClientFilename, clientV7Classes);
+
+        // This is used in interface and will break more than it fixes
+        clientV7Classes.remove("com.vaadin.v7.client.ComponentConnector");
+
         serverV7UIClasses = serverV7Classes.stream().filter(
                 cls -> cls.matches("^com\\.vaadin\\.v7\\.ui\\.[^\\.]*$"))
                 .collect(Collectors.toSet());
@@ -138,7 +147,8 @@ public class Migrate {
 
     private static String modifyJava(String javaFile) {
         for (String v7Class : Stream
-                .concat(serverV7Classes.stream(), sharedV7Classes.stream())
+                .concat(Stream.concat(serverV7Classes.stream(),
+                        sharedV7Classes.stream()), clientV7Classes.stream())
                 .collect(Collectors.toList())) {
 
             String comvaadinClass = v7Class.replace("com.vaadin.v7.",

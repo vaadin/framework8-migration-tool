@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+ <head>
+  <meta charset="UTF-8">
+  <meta name="design-properties" content="{&quot;RULERS_VISIBLE&quot;:true,&quot;GUIDELINES_VISIBLE&quot;:false,&quot;SNAP_TO_OBJECTS&quot;:true,&quot;SNAP_TO_GRID&quot;:true,&quot;SNAPPING_DISTANCE&quot;:10,&quot;JAVA_SOURCES_ROOT&quot;:&quot;src/main/java&quot;,&quot;THEME&quot;:&quot;mytheme&quot;}">
+  <meta charset="UTF-8" name="vaadin-version" content="7.7.0">
+ </head> 
+ <body> 
+  <vaadin-vertical-layout style-name="crud-template" responsive size-full> 
+   <vaadin-horizontal-layout style-name="top-bar" width-full height="50px"> 
+    <vaadin-horizontal-layout width-full :middle :expand> 
+     <vaadin-text-field icon="fonticon://FontAwesome/f002" input-prompt="Search" style-name="small inline-icon search" width-full _id="search"></vaadin-text-field> 
+    </vaadin-horizontal-layout> 
+    <vaadin-button icon="fonticon://FontAwesome/f067" style-name="borderless" plain-text _id="add" :middle :right>
+      Add new 
+    </vaadin-button> 
+   </vaadin-horizontal-layout> 
+   <vaadin-css-layout style-name="content" size-full :expand> 
+    <vaadin-css-layout style-name="list" size-full> 
+     <vaadin-grid size-full _id="list"> 
+      <table> 
+       <colgroup> 
+        <col property-id="Project" sortable> 
+        <col property-id="Status" sortable> 
+       </colgroup> 
+       <thead> 
+        <tr default> 
+         <th plain-text>Project</th> 
+         <th plain-text>Status</th> 
+        </tr> 
+       </thead> 
+       <tbody> 
+        <tr> 
+         <td>Customer Project 1</td> 
+         <td>OK</td> 
+        </tr> 
+        <tr> 
+         <td>Customer Project 2</td> 
+         <td>OK</td> 
+        </tr> 
+        <tr> 
+         <td>Customer Project 3</td> 
+         <td>OK</td> 
+        </tr> 
+        <tr> 
+         <td>Customer Project 4</td> 
+         <td>OK</td> 
+        </tr> 
+        <tr> 
+         <td>Customer Project 5</td> 
+         <td>OK</td> 
+        </tr> 
+        <tr> 
+         <td>Customer Project 6</td> 
+         <td>OK</td> 
+        </tr> 
+        <tr> 
+         <td>Customer Project 7</td> 
+         <td>OK</td> 
+        </tr> 
+        <tr> 
+         <td>Customer Project 8</td> 
+         <td>OK</td> 
+        </tr> 
+        <tr> 
+         <td>Customer Project 9</td> 
+         <td>OK</td> 
+        </tr> 
+       </tbody> 
+      </table> 
+     </vaadin-grid> 
+    </vaadin-css-layout> 
+    <vaadin-vertical-layout style-name="inspect" size-full> 
+     <vaadin-css-layout style-name="edit" width-full height="100.66%" :expand> 
+      <vaadin-css-layout style-name="section half" width-full> 
+       <vaadin-text-field caption="First name:" style-name="small" width-full _id="firstName"></vaadin-text-field> 
+      </vaadin-css-layout> 
+      <vaadin-css-layout style-name="section half" width-full> 
+       <vaadin-text-field caption="Last name:" style-name="small" width-full _id="lastName"></vaadin-text-field> 
+      </vaadin-css-layout> 
+      <vaadin-css-layout style-name="section half" width-full> 
+       <vaadin-text-field caption="Job title:" style-name="small" width-full _id="jobTitle"></vaadin-text-field> 
+      </vaadin-css-layout> 
+      <vaadin-css-layout style-name="section half" width-full> 
+       <vaadin-text-field caption="Phone number:" style-name="small" width-full _id="phoneNumber"></vaadin-text-field> 
+      </vaadin-css-layout> 
+      <vaadin-css-layout style-name="section half" width-full> 
+       <vaadin-text-field caption="Email:" style-name="small" width-full _id="email"></vaadin-text-field> 
+      </vaadin-css-layout> 
+      <vaadin-css-layout style-name="section half" width-full> 
+       <vaadin-text-field caption="Company:" style-name="small" width-full _id="company"></vaadin-text-field> 
+      </vaadin-css-layout> 
+      <vaadin-css-layout style-name="section half" width-full> 
+       <vaadin-text-field caption="Web page url:" style-name="small" width-full _id="url"></vaadin-text-field> 
+      </vaadin-css-layout> 
+      <vaadin-css-layout style-name="section half" width-full> 
+       <vaadin-text-area caption="Notes:" width-full _id="notes"></vaadin-text-area> 
+      </vaadin-css-layout> 
+     </vaadin-css-layout> 
+     <vaadin-horizontal-layout style-name="buttons border-top" spacing width-full height="50px"> 
+      <vaadin-button style-name="small primary" plain-text _id="update" :middle>
+        Update 
+      </vaadin-button> 
+      <vaadin-button style-name="small" plain-text _id="cancel" :middle :center>
+        Cancel 
+      </vaadin-button> 
+      <vaadin-button style-name="small danger" plain-text _id="delete" :middle :right :expand>
+        Delete 
+      </vaadin-button> 
+     </vaadin-horizontal-layout> 
+    </vaadin-vertical-layout> 
+   </vaadin-css-layout> 
+  </vaadin-vertical-layout>  
+ </body>
+</html>

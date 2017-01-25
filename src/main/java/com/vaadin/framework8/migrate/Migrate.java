@@ -182,9 +182,9 @@ public class Migrate {
 
             // Version
             htmlFile = htmlFile.replaceAll(
-                    "<meta name=\"vaadin-version\" content=\"7.*\">",
-                    "<meta name=\"vaadin-version\" content=\"" + version
-                            + "\">");
+                    "<meta(.*)name=\"vaadin-version\"(.*)content=\"7.*\"(.*)>",
+                    "<meta$1name=\"vaadin-version\"$2content=\"" + version
+                            + "\"$3>");
         }
 
         return htmlFile;

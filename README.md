@@ -38,7 +38,7 @@ The tool does not, and you need to
 </pre>
 * Change project dependencies from `vaadin-server` to `vaadin-compatibility-server`
 * Change project dependencies from `vaadin-client-compiled` to `vaadin-compatibility-client-compiled` if you are using `com.vaadin.DefaultWidgetSet`
-* Change project widget set from `com.vaadin.DefaultWidgetSet` to `com.vaadin.v7.Vaadin7WidgetSet` if you are using `DefaultWidgetset`. This is typically declared in @Widgetset annotation in your UI or in web.xml file.
+* Change project widget set from `com.vaadin.DefaultWidgetSet` to `com.vaadin.v7.Vaadin7WidgetSet` if you are using `DefaultWidgetset`. This is typically declared with a @Widgetset annotation in your UI or in the web.xml file.
 * Recompile your widget set if you are not using `com.vaadin.DefaultWidgetSet`
 
 

@@ -1,8 +1,13 @@
 package com.vaadin.framework8.migrate;
 
+import org.apache.commons.io.IOUtils;
+
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -14,8 +19,6 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
-
-import org.apache.commons.io.IOUtils;
 
 public class Migrate {
 
@@ -89,7 +92,7 @@ public class Migrate {
     }
 
     private static void migrateFiles(File directory, AtomicInteger javaCount,
-            AtomicInteger htmlCount, String version) {
+                                     AtomicInteger htmlCount, String version) {
         assert directory.isDirectory();
 
         for (File f : directory.listFiles()) {
@@ -135,7 +138,10 @@ public class Migrate {
 
     private static void migrateJava(File f) throws IOException {
         String javaFile = IOUtils.toString(f.toURI(), StandardCharsets.UTF_8);
-        IOUtils.write(modifyJava(javaFile), new FileOutputStream(f));
+        try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(f));
+             OutputStreamWriter output = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8)) {
+            IOUtils.write(modifyJava(javaFile), output);
+        }
     }
 
     private static void migrateDeclarative(File f, String version)

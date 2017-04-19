@@ -1,7 +1,5 @@
 package com.vaadin.framework8.migrate;
 
-import org.apache.commons.io.IOUtils;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -10,7 +8,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -20,6 +20,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import org.apache.commons.io.IOUtils;
+
 public class Migrate {
 
     private static final String VERSION = "-version=";
@@ -28,6 +30,7 @@ public class Migrate {
     private static Set<String> sharedV7Classes;
     private static Set<String> serverV7UIClasses;
     private static Set<String> clientV7Classes;
+    private static Map<String, String> specialRenames;
 
     public static void main(String[] args) throws Exception {
         String version = "8.0.0.beta1";
@@ -64,6 +67,12 @@ public class Migrate {
                 + sharedV7Classes.size() + " classes, including "
                 + serverV7UIClasses.size() + " UI classes");
 
+        specialRenames = new HashMap<>();
+        specialRenames.put("com.vaadin.data.fieldgroup.PropertyId",
+                "com.vaadin.annotations.PropertyId");
+        specialRenames.put("com.vaadin.shared.ui.grid.Range",
+                "com.vaadin.shared.Range");
+
         File projectRoot = new File(".");
         AtomicInteger javaCount = new AtomicInteger(0);
         AtomicInteger htmlCount = new AtomicInteger(0);
@@ -92,7 +101,7 @@ public class Migrate {
     }
 
     private static void migrateFiles(File directory, AtomicInteger javaCount,
-                                     AtomicInteger htmlCount, String version) {
+            AtomicInteger htmlCount, String version) {
         assert directory.isDirectory();
 
         for (File f : directory.listFiles()) {
@@ -138,8 +147,10 @@ public class Migrate {
 
     private static void migrateJava(File f) throws IOException {
         String javaFile = IOUtils.toString(f.toURI(), StandardCharsets.UTF_8);
-        try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(f));
-             OutputStreamWriter output = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8)) {
+        try (OutputStream outputStream = new BufferedOutputStream(
+                new FileOutputStream(f));
+                OutputStreamWriter output = new OutputStreamWriter(outputStream,
+                        StandardCharsets.UTF_8)) {
             IOUtils.write(modifyJava(javaFile), output);
         }
     }
@@ -159,16 +170,27 @@ public class Migrate {
 
             String comvaadinClass = v7Class.replace("com.vaadin.v7.",
                     "com.vaadin.");
-            javaFile = javaFile.replace("import " + comvaadinClass + ";",
-                    "import " + v7Class + ";");
-            javaFile = javaFile.replace("extends " + comvaadinClass + " ",
-                    "extends " + v7Class + " ");
-            javaFile = javaFile.replace("implements " + comvaadinClass + " ",
-                    "implements " + v7Class + " ");
-            javaFile = javaFile.replace("throws " + comvaadinClass + " ",
-                    "throws " + v7Class + " ");
+            javaFile = performReplacement(javaFile, comvaadinClass, v7Class);
         }
 
+        for (Map.Entry<String, String> rename : specialRenames.entrySet()) {
+            javaFile = performReplacement(javaFile, rename.getKey(),
+                    rename.getValue());
+        }
+
+        return javaFile;
+    }
+
+    private static String performReplacement(String javaFile,
+            String comvaadinClass, String v7Class) {
+        javaFile = javaFile.replace("import " + comvaadinClass + ";",
+                "import " + v7Class + ";");
+        javaFile = javaFile.replace("extends " + comvaadinClass + " ",
+                "extends " + v7Class + " ");
+        javaFile = javaFile.replace("implements " + comvaadinClass + " ",
+                "implements " + v7Class + " ");
+        javaFile = javaFile.replace("throws " + comvaadinClass + " ",
+                "throws " + v7Class + " ");
         return javaFile;
     }
 

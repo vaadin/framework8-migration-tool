@@ -12,6 +12,14 @@ in "myproject" run
 
 `java -jar $HOME/.m2/repository/com/vaadin/framework8-migration-tool/8.0-SNAPSHOT/framework8-migration-tool-8.0-SNAPSHOT.jar`
 
+It supports two optional parameters, one for setting the target version of the framework
+
+`-version=8.1.1`
+
+and another one for setting the charset (by default the system default will be used) of the source files
+
+`-charset=cp1252`
+
 ## What Is Migrated?
 
 The tool changes

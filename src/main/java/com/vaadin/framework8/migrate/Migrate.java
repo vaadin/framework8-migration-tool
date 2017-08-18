@@ -6,7 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,6 +25,7 @@ import org.apache.commons.io.IOUtils;
 public class Migrate {
 
     private static final String VERSION = "-version=";
+    private static final String CHARSET = "-charset=";
 
     private static HashSet<String> serverV7Classes;
     private static Set<String> sharedV7Classes;
@@ -34,9 +35,15 @@ public class Migrate {
 
     public static void main(String[] args) throws Exception {
         String version = "8.0.0.beta1";
+        Charset charset = Charset.defaultCharset();
+
         if (args.length > 0) {
-            if (args[0].startsWith(VERSION)) {
-                version = args[0].substring(VERSION.length());
+            for (String arg : args) {
+                if (arg.startsWith(VERSION)) {
+                    version = arg.substring(VERSION.length());
+                } else if (arg.startsWith(CHARSET)) {
+                    charset = Charset.forName(arg.substring(CHARSET.length()));
+                }
             }
         }
         System.out.println("Scanning for compatibility classes for " + version
@@ -76,7 +83,7 @@ public class Migrate {
         File projectRoot = new File(".");
         AtomicInteger javaCount = new AtomicInteger(0);
         AtomicInteger htmlCount = new AtomicInteger(0);
-        migrateFiles(projectRoot, javaCount, htmlCount, version);
+        migrateFiles(projectRoot, javaCount, htmlCount, version, charset);
 
         System.out.println("Scanned " + javaCount.get() + " Java files");
         System.out.println("Scanned " + htmlCount.get() + " HTML files");
@@ -101,23 +108,23 @@ public class Migrate {
     }
 
     private static void migrateFiles(File directory, AtomicInteger javaCount,
-            AtomicInteger htmlCount, String version) {
+            AtomicInteger htmlCount, String version, Charset charset) {
         assert directory.isDirectory();
 
         for (File f : directory.listFiles()) {
             if (f.isDirectory()) {
-                migrateFiles(f, javaCount, htmlCount, version);
+                migrateFiles(f, javaCount, htmlCount, version, charset);
             } else if (isJavaFile(f)) {
                 try {
                     javaCount.incrementAndGet();
-                    migrateJava(f);
+                    migrateJava(f, charset);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             } else if (isDeclarativeFile(f)) {
                 try {
                     htmlCount.incrementAndGet();
-                    migrateDeclarative(f, version);
+                    migrateDeclarative(f, version, charset);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -145,21 +152,21 @@ public class Migrate {
         return Optional.empty();
     }
 
-    private static void migrateJava(File f) throws IOException {
-        String javaFile = IOUtils.toString(f.toURI(), StandardCharsets.UTF_8);
+    private static void migrateJava(File f, Charset charset) throws IOException {
+        String javaFile = IOUtils.toString(f.toURI(), charset);
         try (OutputStream outputStream = new BufferedOutputStream(
                 new FileOutputStream(f));
                 OutputStreamWriter output = new OutputStreamWriter(outputStream,
-                        StandardCharsets.UTF_8)) {
+                        charset)) {
             IOUtils.write(modifyJava(javaFile), output);
         }
     }
 
-    private static void migrateDeclarative(File f, String version)
+    private static void migrateDeclarative(File f, String version, Charset charset)
             throws IOException {
-        String htmlFile = IOUtils.toString(f.toURI(), StandardCharsets.UTF_8);
+        String htmlFile = IOUtils.toString(f.toURI(), charset);
         IOUtils.write(modifyDeclarative(htmlFile, version),
-                new FileOutputStream(f));
+                new FileOutputStream(f), charset);
     }
 
     private static String modifyJava(String javaFile) {

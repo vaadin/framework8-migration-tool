@@ -25,8 +25,8 @@ public class MigrationToolTest {
     @Test
     public void smokeTest() throws Exception {
         project.migrate();
-        assertTrue(project.isModified("src/main/java/com/vaadin/random/files/NewDesign.java"));
-        assertTrue(project.isModified("src/main/resources/com/vaadin/random/files/NewDesign.html"));
+        project.assertModified("src/main/java/com/vaadin/random/files/NewDesign.java");
+        project.assertModified("src/main/resources/com/vaadin/random/files/NewDesign.html");
     }
 
     /**
@@ -35,6 +35,8 @@ public class MigrationToolTest {
      */
     @Test
     public void migrationShouldNotOverwriteUnmodifiedFiles() throws Exception {
+        project.migrate();
         project.assertNotModified("src/main/java/com/vaadin/random/files/FileWithNoVaadinImport.java");
+        project.assertNotModified("src/main/java/com/vaadin/random/files/FileWithNonMigratedVaadinImport.java");
     }
 }

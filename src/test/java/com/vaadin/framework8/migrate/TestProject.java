@@ -1,16 +1,14 @@
 package com.vaadin.framework8.migrate;
 
-import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.Assertions;
 
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -41,14 +39,14 @@ public class TestProject implements Closeable {
      * @return the test project, not null.
      * @throws IOException
      */
-    public static TestProject create() throws IOException {
+    public static TestProject fromTemplate() throws IOException {
         final File dir = new File("test-projects/random-files").getAbsoluteFile();
         assertTrue(dir.exists(), dir + " doesn't exist");
         assertTrue(dir.isDirectory(), dir + " isn't a directory");
         final File tempFile = File.createTempFile("testproject", "dir");
         final File tempDir = new File(tempFile.getAbsolutePath() + "-dir");
         FileUtils.copyDirectory(dir, tempDir);
-        tempFile.delete();
+        Files.delete(tempFile.toPath());
         Files.walk(tempDir.toPath()).forEach(path -> {
             final File file = path.toFile();
             if (file.isFile()) {
@@ -60,18 +58,40 @@ public class TestProject implements Closeable {
         return new TestProject(tempDir);
     }
 
-    public File getFile(String name) {
-        final File file = new File(dir, name);
-        assertTrue(file.exists(), "no such file: " + name + ": " + file + " doesn't exist");
-        assertTrue(file.isFile(), name + " is not a file: " + file + " is not a file");
-        return file;
+    /**
+     * Creates a new empty test project. Use {@link #withFile(String, String, Charset)} and {@link #withJavaFile(String, String, Charset)} to populate
+     * it with files.
+     * @return the test project, not null.
+     * @throws IOException
+     */
+    public static TestProject empty() throws IOException {
+        final File tempFile = File.createTempFile("testproject", "dir");
+        final File tempDir = new File(tempFile.getAbsolutePath() + "-dir");
+        Files.createDirectories(tempDir.toPath());
+        Files.delete(tempFile.toPath());
+        return new TestProject(tempDir);
     }
 
-    public boolean isModified(String name) {
-        final File file = getFile(name);
-        final long lm = file.lastModified();
-        assertFalse(lm <= 0, "last-modified of " + name + " is " + lm);
-        return lm >= System.currentTimeMillis() - ONE_DAY;
+    public TestFile getFile(String name) {
+        return new TestFile(new File(dir, name));
+    }
+
+    /**
+     * Returns the java file located in {@code src/main/java/com/vaadin/random/files}.
+     * @param name the java file name, not null. The file must exist.
+     * @return the test file reference.
+     */
+    public TestJavaFile getJavaFile(String name) {
+        return new TestJavaFile(new File(new File(dir, "src/main/java/com/vaadin/random/files"), name));
+    }
+
+    /**
+     * Returns the Vaadin Designer html template located in {@code src/main/resources/com/vaadin/random/files}.
+     * @param name the template file name, not null. The template file must exist.
+     * @return the test file reference.
+     */
+    public TestFile getTemplate(String name) {
+        return new TestFile(new File(new File(dir, "src/main/resources/com/vaadin/random/files"), name));
     }
 
     @Override
@@ -79,17 +99,37 @@ public class TestProject implements Closeable {
         FileUtils.deleteDirectory(dir);
     }
 
+    /**
+     * Runs the migration to Vaadin 8.5.2.
+     * @throws Exception
+     */
     public void migrate() throws Exception {
         new MigrationTool("8.5.2", dir).migrate();
     }
 
-    private static final long ONE_DAY = 1L * 24 * 60 * 60 * 1000;
+    static final long ONE_DAY = 1L * 24 * 60 * 60 * 1000;
 
-    public void assertModified(String name) throws IOException {
-        assertTrue(isModified(name), "The file " + name + " has NOT been modified by the migration tool. Contents:\n" + FileUtils.readFileToString(getFile(name), Charsets.UTF_8));
+    /**
+     * Creates a new Java file in {@code src/main/java/com/vaadin/random/files/} inside of the project.
+     * @param name the java file name, not null.
+     * @param contents the contents, not null.
+     * @param encoding the file encoding, not null.
+     * @throws IOException
+     */
+    public void withJavaFile(String name, String contents, Charset encoding) throws IOException {
+        withFile("src/main/java/com/vaadin/random/files/" + name, contents, encoding);
     }
 
-    public void assertNotModified(String name) throws IOException {
-        assertFalse(isModified(name), "The file " + name + " has been modified by the migration tool. Contents:\n" + FileUtils.readFileToString(getFile(name), Charsets.UTF_8));
+    /**
+     * Creates a new file in inside of the project.
+     * @param name the java file name, not null.
+     * @param contents the contents, not null.
+     * @param encoding the file encoding, not null.
+     * @throws IOException
+     */
+    public void withFile(String name, String contents, Charset encoding) throws IOException {
+        final File file = new File(dir, name);
+        Files.createDirectories(file.getParentFile().toPath());
+        FileUtils.write(file, contents, encoding);
     }
 }

@@ -25,8 +25,8 @@ public class MigrationToolTest {
     @Test
     public void smokeTest() throws Exception {
         project.migrate();
-        project.assertModified("src/main/java/com/vaadin/random/files/NewDesign.java");
-        project.assertModified("src/main/resources/com/vaadin/random/files/NewDesign.html");
+        project.getJavaFile("NewDesign.java").assertModified();
+        project.getTemplate("NewDesign.html").assertModified();
     }
 
     /**
@@ -36,7 +36,17 @@ public class MigrationToolTest {
     @Test
     public void migrationShouldNotOverwriteUnmodifiedFiles() throws Exception {
         project.migrate();
-        project.assertNotModified("src/main/java/com/vaadin/random/files/FileWithNoVaadinImport.java");
-        project.assertNotModified("src/main/java/com/vaadin/random/files/FileWithNonMigratedVaadinImport.java");
+        project.getJavaFile("FileWithNoVaadinImport.java").assertNotModified();
+        project.getJavaFile("FileWithNonMigratedVaadinImport.java").assertNotModified();
+    }
+
+    @Test
+    public void testImportsAreMigrated() throws Exception {
+        project.migrate();
+        final TestJavaFile myLabel = project.getJavaFile("MyLabel.java");
+        myLabel.assertModified();
+        myLabel.assertContents("package com.vaadin.random.files;\n" +
+                "import com.vaadin.v7.ui.Label;\n" +
+                "public class MyLabel extends Label {}\n");
     }
 }

@@ -1,8 +1,6 @@
 package com.vaadin.framework8.migrate;
 
-import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.Assertions;
 
 import java.io.Closeable;
 import java.io.File;
@@ -10,7 +8,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -60,18 +57,16 @@ public class TestProject implements Closeable {
         return new TestProject(tempDir);
     }
 
-    public File getFile(String name) {
-        final File file = new File(dir, name);
-        assertTrue(file.exists(), "no such file: " + name + ": " + file + " doesn't exist");
-        assertTrue(file.isFile(), name + " is not a file: " + file + " is not a file");
-        return file;
+    public TestFile getFile(String name) {
+        return new TestFile(new File(dir, name));
     }
 
-    public boolean isModified(String name) {
-        final File file = getFile(name);
-        final long lm = file.lastModified();
-        assertFalse(lm <= 0, "last-modified of " + name + " is " + lm);
-        return lm >= System.currentTimeMillis() - ONE_DAY;
+    public TestJavaFile getJavaFile(String name) {
+        return new TestJavaFile(new File(new File(dir, "src/main/java/com/vaadin/random/files"), name));
+    }
+
+    public TestFile getTemplate(String name) {
+        return new TestFile(new File(new File(dir, "src/main/resources/com/vaadin/random/files"), name));
     }
 
     @Override
@@ -83,13 +78,5 @@ public class TestProject implements Closeable {
         new MigrationTool("8.5.2", dir).migrate();
     }
 
-    private static final long ONE_DAY = 1L * 24 * 60 * 60 * 1000;
-
-    public void assertModified(String name) throws IOException {
-        assertTrue(isModified(name), "The file " + name + " has NOT been modified by the migration tool. Contents:\n" + FileUtils.readFileToString(getFile(name), Charsets.UTF_8));
-    }
-
-    public void assertNotModified(String name) throws IOException {
-        assertFalse(isModified(name), "The file " + name + " has been modified by the migration tool. Contents:\n" + FileUtils.readFileToString(getFile(name), Charsets.UTF_8));
-    }
+    static final long ONE_DAY = 1L * 24 * 60 * 60 * 1000;
 }

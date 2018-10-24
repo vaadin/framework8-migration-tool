@@ -82,4 +82,8 @@ public class TestProject implements Closeable {
     }
 
     private static final long ONE_DAY = 1L * 24 * 60 * 60 * 1000;
+
+    public void assertNotModified(String name) {
+        assertFalse(isModified(name), "The file " + name + " has been modified by the migration tool");
+    }
 }

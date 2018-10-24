@@ -6,11 +6,13 @@ import org.apache.commons.io.IOUtils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -31,10 +33,12 @@ public class MigrationTool {
     private Map<String, String> specialRenames;
     private final String vaadin8Version;
     private final File projectRoot;
+    private final Charset charset;
 
-    public MigrationTool(String vaadin8Version, File projectRoot) {
-        this.vaadin8Version = vaadin8Version;
-        this.projectRoot = projectRoot;
+    public MigrationTool(String vaadin8Version, File projectRoot, Charset charset) {
+        this.vaadin8Version = Objects.requireNonNull(vaadin8Version);
+        this.projectRoot = Objects.requireNonNull(projectRoot);
+        this.charset = Objects.requireNonNull(charset);
     }
 
     public void migrate() throws Exception {
@@ -137,10 +141,10 @@ public class MigrationTool {
     }
 
     private void migrateJava(File f) throws IOException {
-        String javaFile = IOUtils.toString(f.toURI(), StandardCharsets.UTF_8);
+        String javaFile = IOUtils.toString(f.toURI(), charset);
         String migratedFile = modifyJava(javaFile);
         if (!javaFile.equals(migratedFile)) {
-            FileUtils.write(f, migratedFile, StandardCharsets.UTF_8);
+            FileUtils.write(f, migratedFile, charset);
         }
     }
 

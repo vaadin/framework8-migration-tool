@@ -23,6 +23,13 @@ then:
 * run `java -jar upgrade8.jar 8.5.2` to migrate your project
 * after that's done, remove `upgrade8.jar`
 
+### Parameters
+
+It supports two optional parameters:
+
+* one for setting the target version of the framework: `-version=8.5.1`
+* and another one for setting the charset (by default UTF-8 will be used) of the source files `-charset=cp1252`
+
 ## What Is Migrated?
 
 The tool changes

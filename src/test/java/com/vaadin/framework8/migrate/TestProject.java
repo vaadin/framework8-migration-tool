@@ -1,5 +1,6 @@
 package com.vaadin.framework8.migrate;
 
+import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
 
 import java.io.Closeable;
@@ -73,16 +74,29 @@ public class TestProject implements Closeable {
     }
 
     public TestFile getFile(String name) {
-        return new TestFile(new File(dir, name));
+        return getFile(name, Charsets.UTF_8);
+    }
+
+    public TestFile getFile(String name, Charset charset) {
+        return new TestFile(new File(dir, name), charset);
     }
 
     /**
-     * Returns the java file located in {@code src/main/java/com/vaadin/random/files}.
+     * Returns the java file located in {@code src/main/java/com/vaadin/random/files}. UTF-8.
      * @param name the java file name, not null. The file must exist.
      * @return the test file reference.
      */
     public TestJavaFile getJavaFile(String name) {
-        return new TestJavaFile(new File(new File(dir, "src/main/java/com/vaadin/random/files"), name));
+        return getJavaFile(name, Charsets.UTF_8);
+    }
+
+    /**
+     * Returns the java file located in {@code src/main/java/com/vaadin/random/files}. UTF-8.
+     * @param name the java file name, not null. The file must exist.
+     * @return the test file reference.
+     */
+    public TestJavaFile getJavaFile(String name, Charset charset) {
+        return getFile("src/main/java/com/vaadin/random/files/" + name, charset).java();
     }
 
     /**
@@ -91,7 +105,7 @@ public class TestProject implements Closeable {
      * @return the test file reference.
      */
     public TestFile getTemplate(String name) {
-        return new TestFile(new File(new File(dir, "src/main/resources/com/vaadin/random/files"), name));
+        return getFile("src/main/resources/com/vaadin/random/files/" + name, Charsets.UTF_8);
     }
 
     @Override
@@ -104,7 +118,15 @@ public class TestProject implements Closeable {
      * @throws Exception
      */
     public void migrate() throws Exception {
-        new MigrationTool("8.5.2", dir).migrate();
+        migrate("8.5.2", Charsets.UTF_8);
+    }
+
+    /**
+     * Runs the migration.
+     * @throws Exception
+     */
+    public void migrate(String vaadinVersion, Charset charset) throws Exception {
+        new MigrationTool(vaadinVersion, dir, charset).migrate();
     }
 
     static final long ONE_DAY = 1L * 24 * 60 * 60 * 1000;

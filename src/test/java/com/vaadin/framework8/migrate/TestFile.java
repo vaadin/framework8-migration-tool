@@ -1,13 +1,12 @@
 package com.vaadin.framework8.migrate;
 
-import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Objects;
 
-import static org.apache.commons.io.FileUtils.getFile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -17,9 +16,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class TestFile {
     public final File file;
+    public final Charset charset;
 
-    public TestFile(File file) {
+    public TestFile(File file, Charset charset) {
         this.file = Objects.requireNonNull(file);
+        this.charset = Objects.requireNonNull(charset);
         assertTrue(file.isAbsolute());
         assertTrue(file.exists(), file + " doesn't exist");
         assertTrue(file.isFile(), file + " isn't a file");
@@ -36,11 +37,11 @@ public class TestFile {
     }
 
     public TestJavaFile java() {
-        return new TestJavaFile(file);
+        return new TestJavaFile(file, charset);
     }
 
     public String getContents() throws IOException {
-        return FileUtils.readFileToString(file, Charsets.UTF_8);
+        return FileUtils.readFileToString(file, charset);
     }
 
     public void assertModified() throws IOException {

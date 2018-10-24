@@ -33,7 +33,7 @@ public class Migrate {
     private static Map<String, String> specialRenames;
 
     public static void main(String[] args) throws Exception {
-        String version = "8.0.0.beta1";
+        String version = "8.5.2";
         if (args.length > 0) {
             if (args[0].startsWith(VERSION)) {
                 version = args[0].substring(VERSION.length());

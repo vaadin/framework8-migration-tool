@@ -1,5 +1,6 @@
 package com.vaadin.framework8.migrate;
 
+import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 
@@ -51,7 +52,7 @@ public class TestProject implements Closeable {
         Files.walk(tempDir.toPath()).forEach(path -> {
             final File file = path.toFile();
             if (file.isFile()) {
-                if (!file.setLastModified(file.lastModified() - 2 * ONE_DAY)) {
+                if (!file.setLastModified(System.currentTimeMillis() - 2 * ONE_DAY)) {
                     throw new RuntimeException("Failed to set lastModified of " + file + " to 2 days ago");
                 }
             }
@@ -67,7 +68,8 @@ public class TestProject implements Closeable {
     }
 
     public boolean isModified(String name) {
-        final long lm = getFile(name).lastModified();
+        final File file = getFile(name);
+        final long lm = file.lastModified();
         assertFalse(lm <= 0, "last-modified of " + name + " is " + lm);
         return lm >= System.currentTimeMillis() - ONE_DAY;
     }
@@ -83,7 +85,11 @@ public class TestProject implements Closeable {
 
     private static final long ONE_DAY = 1L * 24 * 60 * 60 * 1000;
 
-    public void assertNotModified(String name) {
-        assertFalse(isModified(name), "The file " + name + " has been modified by the migration tool");
+    public void assertModified(String name) throws IOException {
+        assertTrue(isModified(name), "The file " + name + " has NOT been modified by the migration tool. Contents:\n" + FileUtils.readFileToString(getFile(name), Charsets.UTF_8));
+    }
+
+    public void assertNotModified(String name) throws IOException {
+        assertFalse(isModified(name), "The file " + name + " has been modified by the migration tool. Contents:\n" + FileUtils.readFileToString(getFile(name), Charsets.UTF_8));
     }
 }

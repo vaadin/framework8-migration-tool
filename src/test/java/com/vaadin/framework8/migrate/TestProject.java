@@ -91,7 +91,7 @@ public class TestProject implements Closeable {
     }
 
     /**
-     * Returns the java file located in {@code src/main/java/com/vaadin/random/files}. UTF-8.
+     * Returns the java file located in {@code src/main/java/com/vaadin/random/files}.
      * @param name the java file name, not null. The file must exist.
      * @return the test file reference.
      */
@@ -100,7 +100,7 @@ public class TestProject implements Closeable {
     }
 
     /**
-     * Returns the Vaadin Designer html template located in {@code src/main/resources/com/vaadin/random/files}.
+     * Returns the Vaadin Designer html template located in {@code src/main/resources/com/vaadin/random/files}. Uses UTF_8 charset.
      * @param name the template file name, not null. The template file must exist.
      * @return the test file reference.
      */
@@ -153,5 +153,16 @@ public class TestProject implements Closeable {
         final File file = new File(dir, name);
         Files.createDirectories(file.getParentFile().toPath());
         FileUtils.write(file, contents, encoding);
+        if (!file.setLastModified(System.currentTimeMillis() - 2 * ONE_DAY)) {
+            throw new RuntimeException("Failed to set lastModified of " + file + " to 2 days ago");
+        }
+    }
+
+    public void withTemplate(String name, String contents) throws IOException {
+        withTemplate(name, contents, Charsets.UTF_8);
+    }
+
+    public void withTemplate(String name, String contents, Charset encoding) throws IOException {
+        withFile("src/main/resources/com/vaadin/random/files/" + name, contents, encoding);
     }
 }

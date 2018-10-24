@@ -77,8 +77,8 @@ public class TestProject implements Closeable {
         FileUtils.deleteDirectory(dir);
     }
 
-    public void migrate() {
-        throw new RuntimeException("Unimplemented");
+    public void migrate() throws Exception {
+        new MigrationTool("8.5.2", dir).migrate();
     }
 
     private static final long ONE_DAY = 1L * 24 * 60 * 60 * 1000;

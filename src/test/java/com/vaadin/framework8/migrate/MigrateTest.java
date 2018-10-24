@@ -22,6 +22,8 @@ public class MigrateTest {
 
     @Test
     public void smokeTest() throws Exception {
-        TestProject.create().migrate();
+        final TestProject testProject = TestProject.create();
+        System.out.println(testProject.pomXml);
+        testProject.migrate();
     }
 }

@@ -151,8 +151,10 @@ public class MigrationTool {
     private void migrateDeclarative(File f, String version)
             throws IOException {
         String htmlFile = IOUtils.toString(f.toURI(), StandardCharsets.UTF_8);
-        IOUtils.write(modifyDeclarative(htmlFile, version),
-                new FileOutputStream(f));
+        final String migratedFile = modifyDeclarative(htmlFile, version);
+        if (!htmlFile.equals(migratedFile)) {
+            IOUtils.write(migratedFile, new FileOutputStream(f), StandardCharsets.UTF_8);
+        }
     }
 
     private String modifyJava(String javaFile) {

@@ -5,6 +5,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.Charset;
+
 /**
  * @author mavi
  */
@@ -44,6 +46,13 @@ public class MigrationToolTest {
     }
 
     @Test
+    public void migrationShouldNotOverwriteUnmodifiedTemplates() throws Exception {
+        project.withTemplate("Foo.html", "</>");
+        project.migrate();
+        project.getTemplate("Foo.html").assertNotModified();
+    }
+
+    @Test
     public void testImportsAreMigrated() throws Exception {
         project.withJavaFile("MyLabel.java", "package com.vaadin.random.files;\n" +
                 "import com.vaadin.ui.Label;\n" +
@@ -54,6 +63,15 @@ public class MigrationToolTest {
         myLabel.assertContents("package com.vaadin.random.files;\n" +
                 "import com.vaadin.v7.ui.Label;\n" +
                 "public class MyLabel extends Label {}\n");
+    }
+
+    @Test
+    public void testTemplatesAreMigrated() throws Exception {
+        project.withTemplate("Foo.html", "<vaadin-vertical-layout></vaadin-vertical-layout>");
+        project.migrate();
+        final TestFile template = project.getTemplate("Foo.html");
+        template.assertModified();
+        template.assertContents("<vaadin7-vertical-layout></vaadin7-vertical-layout>");
     }
 
     /**
@@ -69,5 +87,15 @@ public class MigrationToolTest {
         myLabel.assertContents("package com.vaadin.random.files;\n" +
                 "import com.vaadin.v7.ui.Label;\n" +
                 "public class MyLabel extends Label {}\n// Geschäftspartner");
+    }
+
+    @Test
+    public void saveDeclarativeFilesInUTF8() throws Exception {
+        TestUtils.setDefaultCharset(Charsets.ISO_8859_1);
+        project.withTemplate("Foo.html", "<vaadin-vertical-layout><!-- Geschäftspartner --></vaadin-vertical-layout>");
+        project.migrate();
+        final TestFile template = project.getTemplate("Foo.html");
+        template.assertModified();
+        template.assertContents("<vaadin7-vertical-layout><!-- Geschäftspartner --></vaadin7-vertical-layout>");
     }
 }

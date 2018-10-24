@@ -234,7 +234,7 @@ public class Migrate {
     private static String classNameToElementName(String className) {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < className.length(); i++) {
-            Character c = className.charAt(i);
+            char c = className.charAt(i);
             if (Character.isUpperCase(c)) {
                 if (i > 0) {
                     result.append("-");

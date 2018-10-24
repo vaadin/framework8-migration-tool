@@ -173,6 +173,14 @@ public class MigrationTool {
                     rename.getValue());
         }
 
+        javaFile = javaFile.replace("import com.vaadin.ui.*;", "import com.vaadin.v7.ui.*;");
+        javaFile = javaFile.replace("import com.vaadin.data.*;", "import com.vaadin.v7.data.*;");
+        javaFile = javaFile.replace("import com.vaadin.data.util.*;", "import com.vaadin.v7.data.util.*;");
+        javaFile = javaFile.replace("import com.vaadin.data.validator.*;", "import com.vaadin.v7.data.validator.*;");
+        javaFile = javaFile.replace("import com.vaadin.data.util.converter.*;", "import com.vaadin.v7.data.util.converter.*;");
+        javaFile = javaFile.replace("import com.vaadin.data.util.filter.*;", "import com.vaadin.v7.data.util.filter.*;");
+        javaFile = javaFile.replace("import com.vaadin.data.util.sqlcontainer.*;", "import com.vaadin.v7.data.util.sqlcontainer.*;");
+
         return javaFile;
     }
 

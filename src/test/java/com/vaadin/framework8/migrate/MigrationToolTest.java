@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author mavi
  */
-public class MigrateTest {
+public class MigrationToolTest {
     private TestProject project;
 
     @BeforeEach

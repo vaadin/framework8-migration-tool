@@ -1,10 +1,9 @@
 package com.vaadin.framework8.migrate;
 
+import org.apache.commons.io.Charsets;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author mavi
@@ -14,7 +13,7 @@ public class MigrationToolTest {
 
     @BeforeEach
     public void setupTestProject() throws Exception {
-        project = TestProject.create();
+        project = TestProject.empty();
     }
 
     @AfterEach
@@ -24,9 +23,11 @@ public class MigrationToolTest {
 
     @Test
     public void smokeTest() throws Exception {
+        project.close();
+        project = TestProject.fromTemplate();
         project.migrate();
-        project.assertModified("src/main/java/com/vaadin/random/files/NewDesign.java");
-        project.assertModified("src/main/resources/com/vaadin/random/files/NewDesign.html");
+        project.getJavaFile("NewDesign.java").assertModified();
+        project.getTemplate("NewDesign.html").assertModified();
     }
 
     /**
@@ -35,9 +36,23 @@ public class MigrationToolTest {
      */
     @Test
     public void migrationShouldNotOverwriteUnmodifiedFiles() throws Exception {
+        project.close();
+        project = TestProject.fromTemplate();
         project.migrate();
-        project.assertNotModified("src/main/java/com/vaadin/random/files/FileWithNoVaadinImport.java");
-        project.assertNotModified("src/main/java/com/vaadin/random/files/FileWithNonMigratedVaadinImport.java");
+        project.getJavaFile("FileWithNoVaadinImport.java").assertNotModified();
+        project.getJavaFile("FileWithNonMigratedVaadinImport.java").assertNotModified();
     }
 
+    @Test
+    public void testImportsAreMigrated() throws Exception {
+        project.withJavaFile("MyLabel.java", "package com.vaadin.random.files;\n" +
+                "import com.vaadin.ui.Label;\n" +
+                "public class MyLabel extends Label {}\n", Charsets.UTF_8);
+        project.migrate();
+        final TestJavaFile myLabel = project.getJavaFile("MyLabel.java");
+        myLabel.assertModified();
+        myLabel.assertContents("package com.vaadin.random.files;\n" +
+                "import com.vaadin.v7.ui.Label;\n" +
+                "public class MyLabel extends Label {}\n");
+    }
 }

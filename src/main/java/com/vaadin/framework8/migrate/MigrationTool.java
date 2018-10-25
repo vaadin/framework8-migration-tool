@@ -3,12 +3,9 @@ package com.vaadin.framework8.migrate;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -103,26 +100,18 @@ public class MigrationTool {
     }
 
     private void migrateFiles(File directory, AtomicInteger javaCount,
-                                     AtomicInteger htmlCount, String version) {
+                                     AtomicInteger htmlCount, String version) throws IOException {
         assert directory.isDirectory();
 
         for (File f : directory.listFiles()) {
             if (f.isDirectory()) {
                 migrateFiles(f, javaCount, htmlCount, version);
             } else if (isJavaFile(f)) {
-                try {
-                    javaCount.incrementAndGet();
-                    migrateJava(f);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                javaCount.incrementAndGet();
+                migrateJava(f);
             } else if (isDeclarativeFile(f)) {
-                try {
-                    htmlCount.incrementAndGet();
-                    migrateDeclarative(f, version);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                htmlCount.incrementAndGet();
+                migrateDeclarative(f, version);
             }
         }
     }

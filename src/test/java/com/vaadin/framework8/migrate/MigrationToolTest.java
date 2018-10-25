@@ -55,4 +55,19 @@ public class MigrationToolTest {
                 "import com.vaadin.v7.ui.Label;\n" +
                 "public class MyLabel extends Label {}\n");
     }
+
+    /**
+     * Test for https://github.com/vaadin/framework8-migration-tool/issues/24
+     */
+    @Test
+    public void allowSpecifyingEncoding() throws Exception {
+        project.withJavaFile("MyLabel.java", "package com.vaadin.random.files;\n" +
+                "import com.vaadin.ui.Label;\n" +
+                "public class MyLabel extends Label {}\n// Geschäftspartner", Charsets.ISO_8859_1);
+        project.migrate("8.5.2", Charsets.ISO_8859_1);
+        final TestJavaFile myLabel = project.getJavaFile("MyLabel.java", Charsets.ISO_8859_1);
+        myLabel.assertContents("package com.vaadin.random.files;\n" +
+                "import com.vaadin.v7.ui.Label;\n" +
+                "public class MyLabel extends Label {}\n// Geschäftspartner");
+    }
 }

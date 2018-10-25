@@ -1,5 +1,6 @@
 package com.vaadin.framework8.migrate;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedOutputStream;
@@ -148,11 +149,9 @@ public class MigrationTool {
 
     private void migrateJava(File f) throws IOException {
         String javaFile = IOUtils.toString(f.toURI(), StandardCharsets.UTF_8);
-        try (OutputStream outputStream = new BufferedOutputStream(
-                new FileOutputStream(f));
-             OutputStreamWriter output = new OutputStreamWriter(outputStream,
-                     StandardCharsets.UTF_8)) {
-            IOUtils.write(modifyJava(javaFile), output);
+        String migratedFile = modifyJava(javaFile);
+        if (!javaFile.equals(migratedFile)) {
+            FileUtils.write(f, migratedFile, StandardCharsets.UTF_8);
         }
     }
 

@@ -1,8 +1,18 @@
 # Migration Tool for Converting Vaadin Framework 7 Projects to Vaadin Framework 8
 
-> This tool has been added to the _vaadin-maven-plugin_, and can be run with the target `vaadin:upgrade8`. Please refer to the [documentation](https://vaadin.com/docs/-/part/framework/migration/migrating-to-vaadin8.html) on how to migrate.
+This tool migrates your Vaadin 7 project to Vaadin 8. The official way of using this migration tool
+is via the _vaadin-maven-plugin_ (using the target `vaadin:upgrade8`). Please refer to the [documentation](https://vaadin.com/docs/-/part/framework/migration/migrating-to-vaadin8.html) on how to migrate.
+
 However, running it via the _vaadin-maven-plugin_ disallows you from adding your own custom rules to the migration tool, so it may be better to run the tool
 in a different way. You only migrate your project once, after all. Please read below on how to introduce custom rules to the migration tool.
+
+You can migrate your project in the following ways:
+
+* If your project is Maven-based, the official way is to use the _vaadin-maven-plugin_ .
+* If your project is Gradle-based, just build this tool, obtain an executable jar file, drop it into your project and run it.
+  It's very easy and the instructions are below.
+* Open this project in your IDE, make any migration changes you like, and then run the `Migrate` main class with the current working directory
+  pointing towards your project, to have your project migrated.
 
 ## Building the Project
 

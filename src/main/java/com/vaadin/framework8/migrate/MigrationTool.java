@@ -75,7 +75,6 @@ public class MigrationTool {
         specialRenames.put("com.vaadin.shared.ui.grid.Range",
                 "com.vaadin.shared.Range");
 
-        File projectRoot = new File(".");
         AtomicInteger javaCount = new AtomicInteger(0);
         AtomicInteger htmlCount = new AtomicInteger(0);
         migrateFiles(projectRoot, javaCount, htmlCount, version);

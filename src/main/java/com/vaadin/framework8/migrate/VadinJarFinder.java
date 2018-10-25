@@ -11,10 +11,7 @@ public class VadinJarFinder {
 
     public static String get(String moduleName, String version)
             throws IOException {
-        String m2 = System.getenv("M2_HOME");
-        if (m2 == null) {
-            m2 = System.getenv("HOME") + "/.m2";
-        }
+        String m2 = System.getenv("HOME") + "/.m2";
 
         final String m2repositoryFolder = m2 + "/repository";
 

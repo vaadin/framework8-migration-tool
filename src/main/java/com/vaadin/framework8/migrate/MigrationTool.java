@@ -153,7 +153,9 @@ public class MigrationTool {
         String htmlFile = IOUtils.toString(f.toURI(), StandardCharsets.UTF_8);
         final String migratedFile = modifyDeclarative(htmlFile, version);
         if (!htmlFile.equals(migratedFile)) {
-            IOUtils.write(migratedFile, new FileOutputStream(f), StandardCharsets.UTF_8);
+            try (FileOutputStream fous = new FileOutputStream(f)) {
+                IOUtils.write(migratedFile, fous, StandardCharsets.UTF_8);
+            }
         }
     }
 

@@ -29,7 +29,7 @@ public class MavenResolver {
             .getService(RepositorySystem.class);
     private static final List<RemoteRepository> repositories = Arrays.asList(
             new RemoteRepository.Builder("central", "default",
-                    "http://central.maven.org/maven2/").build(),
+                    "https://repo1.maven.org/maven2/").build(),
             new RemoteRepository.Builder("vaadin-prereleases", "default",
                     "https://maven.vaadin.com/vaadin-prereleases").build(),
             new RemoteRepository.Builder("snapshot", "default",
